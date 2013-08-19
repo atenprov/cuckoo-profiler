@@ -1,0 +1,75 @@
+<section id="info">
+    <div class="page-header">
+        <h1>Executions Summary <small>Summary information on the malware's executions</small></h1>
+    </div>
+    %if executions_info:
+        <div>
+            <h2><a href="javascript:showHide('executions_info');">Total Executions : ${len(executions_info)}</a></h2>
+            <div id="executions_info" style="display: none;">                   
+        <%
+            counter = 1
+        %>
+        %for summary in executions_info:
+            <div>
+                <h3>${counter}. <a href="javascript:showHide('summary_${counter}');">${summary["exec_id"]}</a></h3>
+                <div id="summary_${counter}" style="display: none;">
+                    <table class="table table-striped table-bordered">
+                        <colgroup>
+                            <col width="150" />
+                            <col width="*" />
+                        </colgroup> 
+                        <tr>                            
+                            <td><strong>Analysis Path</strong>:</td>
+                            %if analysis_path in summary["analysis_info"]:
+                                <!-- Determine the analysis path to access directly the specific analysis results -->
+                                <%                                   
+                                    analysis_html_path = "file://" + summary["analysis_info"]["analysis_path"] + "/reports/report.html"
+                                %>
+                                <td><span class="mono"><a href=${analysis_html_path} target="_blank">
+                                     ${summary["analysis_info"]["analysis_path"]}</a></span></td>
+                            %else:
+                                <td><span class="mono"> </span></td>
+                            %endif
+                        </tr>                     
+                        <tr>
+                            <td><strong>Started</strong>:</td>
+                            <td><span class="mono">${summary["analysis_info"]["started"]}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ended</strong>:</td>
+                            <td><span class="mono">${summary["analysis_info"]["ended"]}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Duration</strong>:</td>
+                            <td><span class="mono">${summary["analysis_info"]["duration"]}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Dropped Files</strong>:</td>
+                            <td><span class="mono">${summary["total_dropped_files"]}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total processes</strong>:</td>
+                            <td><span class="mono">${summary["total_processes"]}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Api Calls</strong>:</td>
+                            <td><span class="mono"> </span></td>
+                            %for api in summary["api_calls"]:
+                                <tr>
+                                    <td><strong>${api}</strong>:</td>
+                                    <td><span class="mono">${summary["api_calls"][api]}</span></td>
+                                </tr>
+                            %endfor    
+                        </tr>                        
+                    </table>
+                </div>
+            </div>
+            <%
+                counter += 1
+            %>
+        %endfor
+        </div>
+    %else:
+        Nothing to display.
+    %endif
+</section>

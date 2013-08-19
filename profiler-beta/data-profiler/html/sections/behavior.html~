@@ -1,0 +1,373 @@
+<section id="behavior">
+    <div class="page-header">
+        <h1>Behavior Analysis <small>details on the malware execution</small></h1>
+    </div>    
+    %if behavior["summary"]:
+        <h2>Summary</h2>              
+        <div class="well">            
+            <h3><a href="javascript:showHide('summary_files');">Files</a></h3>            
+            <div id="summary_files" style="display: none;">    
+            <%
+                summary_counter = 1    
+            %>         
+            %if behavior["summary"]["files"]:                
+                <ul>
+                    %for file in behavior["summary"]["files"]:
+                    <li><span class="mono">${file["path"]}</span>                    
+                    %if len(file["analysis"]) != len(executions_info):
+                       <p><span class="mono">All executions : 
+                          <a href="javascript:showHide('b_summary_${summary_counter}');">No</a>
+                       </span></p></li>
+                       <div id="b_summary_${summary_counter}" style="display: none;">
+                          <table class="table table-striped table-bordered">
+                          <%
+                              counter_analysis = 1    
+                          %>
+                          <tr>
+                              <td><strong>In analysis</strong>:</td>
+                              <td><span class="mono"> </span></td>
+                          </tr>    
+                          %for analysis in file["analysis"]: 
+                              <tr> 
+                                  <td> ${counter_analysis}. </td>                           
+                                  <td><span class="mono"> ${analysis}</span></td>
+                              </tr>
+                              <%
+                                  counter_analysis += 1    
+                              %>
+                          %endfor
+                          </table>
+                       </div>                       
+                    %else:
+                        <p><span class="mono">All executions : Yes</span></p></li>  
+                    %endif
+                    <%
+                        summary_counter += 1   
+                    %>                                       
+                    %endfor
+                </ul>
+            %else:
+                Nothing to display.
+            %endif
+        </div>
+        </div>
+        <div class="well">      
+            <h3><a href="javascript:showHide('summary_mutexes');">Mutexes</a></h3>            
+            <div id="summary_mutexes" style="display: none;">                
+            %if behavior["summary"]["mutexes"]:                
+                <ul>
+                    %for mutex in behavior["summary"]["mutexes"]:
+                    <li><span class="mono">${mutex["name"]}</span>
+                    %if len(mutex["analysis"]) != len(executions_info):
+                       <p><span class="mono">All executions : 
+                          <a href="javascript:showHide('b_summary_${summary_counter}');">No</a>
+                       </span></p></li>
+                       <div id="b_summary_${summary_counter}" style="display: none;">
+                          <table class="table table-striped table-bordered">
+                          <%
+                              counter_analysis = 1    
+                          %>
+                          <tr>
+                              <td><strong>In analysis</strong>:</td>
+                              <td><span class="mono"> </span></td>
+                          </tr>    
+                          %for analysis in mutex["analysis"]: 
+                              <tr> 
+                                  <td> ${counter_analysis}. </td>                           
+                                  <td><span class="mono"> ${analysis}</span></td>
+                              </tr>
+                              <%
+                                  counter_analysis += 1    
+                              %>
+                          %endfor
+                          </table>
+                       </div>                       
+                    %else:
+                        <p><span class="mono">All executions : Yes</span></p></li>  
+                    %endif
+                    <%
+                        summary_counter += 1  
+                    %>                                       
+                    %endfor
+                </ul>
+            %else:
+                Nothing to display.
+            %endif
+        </div>
+        </div>
+        <div class="well">        
+            <h3><a href="javascript:showHide('summary_registry');">Registry Keys</a></h3>            
+            <div id="summary_registry" style="display: none;">               
+            %if behavior["summary"]["keys"]:                
+                <ul>
+                    %for key in behavior["summary"]["keys"]:
+                    <li><span class="mono">${key["name"]}</span>
+                    %if len(key["analysis"]) != len(executions_info):
+                       <p><span class="mono">All executions : 
+                          <a href="javascript:showHide('b_summary_${summary_counter}');">No</a>
+                       </span></p></li>
+                       <div id="b_summary_${summary_counter}" style="display: none;">
+                          <table class="table table-striped table-bordered">
+                          <%
+                              counter_analysis = 1    
+                          %>
+                          <tr>
+                              <td><strong>In analysis</strong>:</td>
+                              <td><span class="mono"> </span></td>
+                          </tr>    
+                          %for analysis in key["analysis"]: 
+                              <tr> 
+                                  <td> ${counter_analysis}. </td>                           
+                                  <td><span class="mono"> ${analysis}</span></td>
+                              </tr>
+                              <%
+                                  counter_analysis += 1    
+                              %>
+                          %endfor
+                          </table>
+                       </div>                       
+                    %else:
+                        <p><span class="mono">All executions : Yes</span></p></li>  
+                    %endif
+                    <%
+                        summary_counter += 1  
+                    %>                                       
+                    %endfor
+                </ul>
+            %else:
+                Nothing to display.
+            %endif
+        </div>
+        </div>
+    %endif
+
+    <h2>Processes</h2>
+    %if behavior_grouped:
+        <%
+            process_counter = 1  
+        %>  
+        %for process in behavior_grouped:
+        <div>
+            <h3><a href="javascript:showHide('process_${process_counter}');">${process_counter}. ${process["process_name"]}</a> <small>
+            %if len(process["analysis"]) == len(executions_info):
+                Found in all executions
+            %else:
+                <a href="javascript:showHide('process_execs_${process_counter}');">Found in some executions</a>
+                <div id="process_execs_${process_counter}" style="display: none;">
+                          <table class="table table-striped table-bordered">
+                          <%
+                              counter_analysis = 1    
+                          %>
+                          <tr>
+                              <td><strong>In analysis</strong>:</td>
+                              <td><span class="mono"> </span></td>
+                          </tr>    
+                          %for analysis in process["analysis"]: 
+                              <tr> 
+                                  <td> ${counter_analysis}. </td>                           
+                                  <td><span class="mono"> ${analysis}</span></td>
+                              </tr>
+                              <%
+                                  counter_analysis += 1    
+                              %>
+                          %endfor
+                          </table>
+                </div>                       
+            %endif
+            </small></h3>
+            <div id="process_${process_counter}" style="display: none;">
+            <%
+                calls_total = len(process["calls_all"]) + len(process["calls_unique"]) + len(process["calls_varied"])
+            %> 
+            <h4>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total different API Calls: ${calls_total}</h4>
+            %if process["calls_all"]:
+                <h4><a href="javascript:showHide('process_calls_all_${process_counter}');">&nbsp;&nbsp;&nbsp;&nbsp;
+                    APIs found in all executions : ${len(process["calls_all"])}</a></h4>
+                <div id="process_calls_all_${process_counter}" style="display: none;">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>                        
+                        <th>Function</th>
+                        <th>Arguments</th>
+                        <th>Status</th>
+                        <th>Return</th>
+                        <th>Repeated</th>
+                        <th>Different Repeats in</th>
+                        <th>Different Status in</th>
+                    </tr>
+                    %for i, call in enumerate(process["calls_all"]):
+                    <tr>                        
+                        <td><span class="mono">${call["api"]}</span></td>
+                        <td>
+                        %for argument in call["arguments"]:
+                            ${argument["name"]} => <span class="mono">${argument["value"]}</span><br />
+                        %endfor
+                        </td>
+                        <td>${call["status"]}</td>
+                        <td>${call["return"]}</td>
+                        <td>
+                        %if call["repeated"] and call["repeated"] > 0:
+                            ${call["repeated"]}
+                            %if call["repeated"] == 1:
+                             time
+                            %elif call["repeated"] > 1:
+                             times
+                            %endif
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_repetitions_in"]:
+                            %for repeats in call["diff_repetitions_in"]:
+                                ${repeats["repeated"]} in <span class="mono">${repeats["in_analysis"]}</span><br />
+                            %endfor
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_status_in"]:
+                            %for diff_status_id in call["diff_status_in"]:
+                                ${diff_status_id}<br />
+                            %endfor
+                        %endif                    
+                        </td>
+                    </tr>
+                    %endfor
+                </table>
+                </div>
+            %else:
+                <h4>&nbsp;&nbsp;&nbsp;&nbsp;APIs found in all executions : ${len(process["calls_all"])}</h4>
+            %endif
+            %if process["calls_unique"]:
+                <h4><a href="javascript:showHide('process_calls_unique_${process_counter}');">&nbsp;&nbsp;&nbsp;&nbsp;
+                    APIs found in only one execution : ${len(process["calls_unique"])}</a></h4>
+                <div id="process_calls_unique_${process_counter}" style="display: none;">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>                        
+                        <th>Function</th>
+                        <th>Arguments</th>
+                        <th>Status</th>
+                        <th>Return</th>
+                        <th>Repeated</th>
+                        <th>Different Repeats in</th>
+                        <th>Different Status in</th>
+                    </tr>
+                    %for i, call in enumerate(process["calls_unique"]):
+                    <tr>                        
+                        <td><span class="mono">${call["api"]}</span><br />
+                            <h5><small>called in analysis <span class="mono">${call["analysis"][0]}</span></small></h5>
+                        </td>
+                        <td>
+                        %for argument in call["arguments"]:
+                            ${argument["name"]} => <span class="mono">${argument["value"]}</span><br />
+                        %endfor
+                        </td>
+                        <td>${call["status"]}</td>
+                        <td>${call["return"]}</td>
+                        <td>
+                        %if call["repeated"] and call["repeated"] > 0:
+                            ${call["repeated"]}
+                            %if call["repeated"] == 1:
+                             time
+                            %elif call["repeated"] > 1:
+                             times
+                            %endif
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_repetitions_in"]:
+                            %for repeats in call["diff_repetitions_in"]:
+                                ${repeats["repeated"]} in <span class="mono">${repeats["in_analysis"]}</span><br />
+                            %endfor
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_status_in"]:
+                            %for diff_status_id in call["diff_status_in"]:
+                                ${diff_status_id}
+                            %endfor
+                        %endif                    
+                        </td>
+                    </tr>
+                    %endfor
+                </table>
+                </div>
+            %else:
+               <h4>&nbsp;&nbsp;&nbsp;&nbsp;APIs found in only one execution : ${len(process["calls_unique"])}</h4>
+            %endif
+            %if process["calls_varied"]:
+                <h4><a href="javascript:showHide('process_calls_varied_${process_counter}');">&nbsp;&nbsp;&nbsp;&nbsp;
+                    APIs found in various executions : ${len(process["calls_varied"])}</a></h4>
+                <div id="process_calls_varied_${process_counter}" style="display: none;">
+                <table class="table table-striped table-bordered table-condensed">
+                    <tr>                        
+                        <th>Function</th>
+                        <th>Arguments</th>
+                        <th>Status</th>
+                        <th>Return</th>
+                        <th>Repeated</th>
+                        <th>Different Repeats in</th>
+                        <th>Different Status in</th>
+                    </tr>
+                    %for i, call in enumerate(process["calls_varied"]):
+                    <tr>                        
+                        <td><span class="mono">${call["api"]}</span><br />
+                            <h5><small><a href="javascript:showHide('call_varied_${i}_process${process_counter}');">
+                                called in ${len(call["analysis"])} out of ${len(executions_info)} executions</a>
+                                <div id="call_varied_${i}_process${process_counter}" style="display: none;">
+                                <%
+                                    counter_analysis = 1    
+                                %>                                              
+                                %for analysis in call["analysis"]: 
+                                    ${counter_analysis}. <span class="mono">${analysis}</span><br />            
+                                    <%
+                                        counter_analysis += 1    
+                                    %>
+                                %endfor
+                                </div>                    
+                            </small></h5></td>
+                        <td>
+                        %for argument in call["arguments"]:
+                            ${argument["name"]} => <span class="mono">${argument["value"]}</span><br />
+                        %endfor
+                        </td>
+                        <td>${call["status"]}</td>
+                        <td>${call["return"]}</td>
+                        <td>
+                        %if call["repeated"] and call["repeated"] > 0:
+                            ${call["repeated"]}
+                            %if call["repeated"] == 1:
+                             time
+                            %elif call["repeated"] > 1:
+                             times
+                            %endif
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_repetitions_in"]:
+                            %for repeats in call["diff_repetitions_in"]:
+                                ${repeats["repeated"]} in <span class="mono">${repeats["in_analysis"]}</span><br /> 
+                            %endfor
+                        %endif
+                        </td>
+                        <td>
+                        %if call["diff_status_in"]:
+                            %for diff_status_id in call["diff_status_in"]:
+                                ${diff_status_id}
+                            %endfor
+                        %endif                    
+                        </td>
+                    </tr>
+                    %endfor
+                </table>
+                </div>
+            %else:
+              <h4>&nbsp;&nbsp;&nbsp;&nbsp;APIs found in various executions : ${len(process["calls_varied"])}</h4>
+            %endif            
+            </div>
+        </div>
+        <%
+            process_counter += 1  
+        %>  
+        %endfor
+    %else:
+        Nothing to display.
+    %endif
+</section>
